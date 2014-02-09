@@ -13,4 +13,4 @@ do
 done
 ```
 
-I'm using [bosh-lite](https://github.com/cloudfoundry/bosh-lite) and [bosh-gen](https://github.com/cloudfoundry-community/bosh-gen) to help achieve this. I'm documenting the steps I'm taking and writing notes in the [wiki](https://github.com/teddyking/hellobosh-boshrelease/wiki).
+I'm using [bosh-lite](https://github.com/cloudfoundry/bosh-lite) and [bosh-gen](https://github.com/cloudfoundry-community/bosh-gen) to help achieve this. I'm also documenting the steps I'm taking and writing notes in the [wiki](https://github.com/teddyking/hellobosh-boshrelease/wiki).
