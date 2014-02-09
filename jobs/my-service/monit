@@ -1,0 +1,5 @@
+check process my-service
+  with pidfile /var/vcap/sys/run/my-service/my-service.pid
+  start program "/var/vcap/jobs/my-service/bin/monit_debugger my-service_ctl '/var/vcap/jobs/my-service/bin/my-service_ctl start'"
+  stop program "/var/vcap/jobs/my-service/bin/monit_debugger my-service_ctl '/var/vcap/jobs/my-service/bin/my-service_ctl stop'"
+  group vcap
