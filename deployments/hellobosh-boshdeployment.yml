@@ -1,0 +1,62 @@
+name: hellobosh-boshdeployment
+director_uuid: 51abcb52-334e-44a8-8f3d-00d2c271919e
+
+releases:
+- name: hellobosh
+  version: latest
+
+jobs:
+- instances: 1
+  name: hellobosh_z1
+  networks:
+  - name: hellobosh1
+    static_ips: null
+  resource_pool: small_z1
+  template: my-service
+
+networks:
+- name: hellobosh1
+  subnets:
+  - cloud_properties:
+      name: random
+    range: 10.244.2.0/30
+    reserved:
+    - 10.244.2.1
+    static: []
+  - cloud_properties:
+      name: random
+    range: 10.244.2.4/30
+    reserved:
+    - 10.244.2.5
+    static: []
+
+resource_pools:
+- cloud_properties:
+    name: random
+  name: small_z1
+  network: hellobosh1
+  size: 1
+  stemcell:
+    name: bosh-warden-boshlite-ubuntu
+    version: latest
+
+compilation:
+  cloud_properties:
+    name: random
+  network: hellobosh1
+  reuse_compilation_vms: true
+  workers: 6
+
+meta:
+  environment: hellobosh-warden
+  stemcell:
+    name: bosh-warden-boshlite-ubuntu
+    version: latest
+
+update:
+  canaries: 1
+  canary_watch_time: 1000-30000
+  max_in_flight: 50
+  update_watch_time: 1000-30000
+
+properties: {}
