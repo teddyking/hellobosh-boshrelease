@@ -1,0 +1,5 @@
+---
+name: my-service
+dependencies: []
+files:
+- my-service/my-service.tar.gz
