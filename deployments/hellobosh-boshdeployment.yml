@@ -1,10 +1,52 @@
+# Comments based on docs here: https://github.com/cloudfoundry-attic/oss-docs/blob/master/bosh/documentation/bosh_deployments.md#steps-of-a-deployment
+
+# name [String, required] The name of this deployment
 name: hellobosh-boshdeployment
+
+# director_uuid [String, required] Identifies the BOSH director
+# that manages this deployment
 director_uuid: 51abcb52-334e-44a8-8f3d-00d2c271919e
 
+# releases [Hash, required] Release properties
+#   name [String, required] The name of the release to use for this deployment
+#   version [String, required] The release version (can be 'latest')
 releases:
 - name: hellobosh
   version: latest
 
+# compilation [Hash, required] Package compilation properties
+#  cloud_properties [Hash, required] Any IaaS-specific properties
+#    e.g. instance_type: m1
+#  network [String, required] Network name, references a network defined in the
+#    'networks' section
+#  reuse_compilation_vms [Boolean, optional] If true, compilation VMs will be
+#    re-used when compiling packages
+#  workers [Integer, required] How many compilation VMs will be created to 
+#    compile packages
+compilation:
+  cloud_properties:
+    name: random
+  network: hellobosh1
+  reuse_compilation_vms: true
+  workers: 6
+
+# jobs [Hash, required] List the jobs included in this deployment
+#   instances [Integer, required] No. of job instances (VMs running this job)
+#   name [String, required] Unique job name
+#   networks [Array, required] Networks required by this job
+#     name [String, required] Specifies a network defined in the 'networks'
+#       section
+#     static_ips [Range, optional] Specifies the range of IPs this job should
+#       reserve from this network
+#     default [Array, optional] Specifies which default network components
+#       (dns, gateway) are populated from this network (only if > 1 network)
+#   resource_pool [String, required] Specifies a resource pool defined in the
+#     'resource_pools' section
+#   template [String, required] The job to run
+#   persistent_disk [Integer, optional] Persistent disk size
+#   properties [Hash, optional] Job properties (e.g. master_ip_address: x)
+#   update [Hash, optional] Job-specific update settings, allows for overriding
+#     global update properties on a per-job basis
 jobs:
 - instances: 1
   name: hellobosh_z1
@@ -14,6 +56,16 @@ jobs:
   resource_pool: small_z1
   template: my-service
 
+# networks [Hash, required] Describe the networks used by this deployment
+#   This is an example of a 'manual' specification
+#   name [String, required] Unique name for the network
+#   subnets [Array, required] An Array of subnet spec Hashes
+#     cloud_properties [Hash, required] Any IaaS-specific properties
+#     range: [String, required] Subnet IP range
+#     reserved [String, optional] IPs from this range that won't be assigned to
+#       BOSH-managed VMs, these are managed outside of BOSH completely
+#     static [String, optional] Static IP range, when jobs request static IPs
+#       they should all come from a subnet's static IP pool
 networks:
 - name: hellobosh1
   subnets:
@@ -30,6 +82,15 @@ networks:
     - 10.244.2.5
     static: []
 
+# resource_pools [Hash, required] Resource pools used by this deployment
+#  name [String, required] Unique name of the resource pool
+#  network [String, required] Specifies a network defined in the 'networks'
+#    section
+#  size [Integer, required] Number of VMs in the resource pools, must be >=
+#    the total no. of job instances using it
+#  stemcell [Hash, required] Stemcell used to run the resource pool
+#    name [String, required] Name of the stemcell
+#    version [String, required] (can be 'latest')
 resource_pools:
 - cloud_properties:
     name: random
@@ -40,23 +101,28 @@ resource_pools:
     name: bosh-warden-boshlite-ubuntu
     version: latest
 
-compilation:
-  cloud_properties:
-    name: random
-  network: hellobosh1
-  reuse_compilation_vms: true
-  workers: 6
-
+# Not sure? Assume meta data about the deployment
 meta:
   environment: hellobosh-warden
   stemcell:
     name: bosh-warden-boshlite-ubuntu
     version: latest
 
+# update [Hash, required] Instance update properties, controls how job
+#  instances will be updated during the deployment
+#  canaries [Integer, required] Canary instances are updated first during a 
+#    deployment and cause the deployment to halt if any update causes an error
+#  canary_watch_time [Range, Integer] How long to wait for the canary to
+#    declare job healthy or unhealthy
+#  max_in_flight [Integer, required] Max no. of non-canary instances that can
+#    update in parallel
+#  update_watch_time [Ranger, Integer] Same as canary_watch_time, but for
+#    non-canary instances
 update:
   canaries: 1
   canary_watch_time: 1000-30000
   max_in_flight: 50
   update_watch_time: 1000-30000
 
+# properties [Hash, required] Global deployment properties
 properties: {}
